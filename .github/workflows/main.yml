@@ -14,10 +14,10 @@ jobs:
       with:
         node-version: 18.4
     
-    - name: Set up Ruby 2.7.1
+    - name: Set up Ruby 2.7.2
       uses: actions/setup-ruby@v1
       with:
-        ruby-version: 2.7.x
+        ruby-version: 2.7.2
     - name: Build and test with Rake
       run: |
         gem install bundler
@@ -29,18 +29,8 @@ jobs:
     - run: snyk auth ${{ secrets.SNYK_TOKEN }}
     
     - name: Snyk Open Source Scanning
-      run: snyk monitor --file=Gemfile.lock --remote-repo-url=rubyCLI --target-reference=RubyOS
+      run: snyk monitor --file=Gemfile.lock --remote-repo-url=rubyCLI --target-reference="RubyOS"
       continue-on-error: true
-      
-    - uses: actions/checkout@master
-    - name: Commit files
-      run: |
-        git config --global user.email "miklos.csecsi@snyk.io"
-        git config --global user.name "mcsnyk"
-        git commit -m "Github action to update bundle" -a
-      
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GH_TOKEN }}
+
+
 
