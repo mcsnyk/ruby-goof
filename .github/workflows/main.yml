@@ -1,0 +1,24 @@
+name: Prebuilt repo + Snyk Security Scanning (OS, Code, Docker, IaC)
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js for installing Snyk 
+      uses: actions/setup-node@v2
+      with:
+        node-version: 18.4
+
+    # Install & prepare Snyk
+    - run: npm install --location=global snyk
+    - run: snyk auth ${{ secrets.SNYK_TOKEN }}
+    
+    - name: Snyk Open Source Scanning
+      run: snyk monitor --file=Gemfile.lock --all-projects --remote-repo-url=mcsnyk/HelloShiftLeft-Scala --target-reference=RubyOS
+      continue-on-error: true
+      
