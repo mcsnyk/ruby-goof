@@ -13,12 +13,33 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 18.4
+    
+    - name: Set up Ruby 2.7.1
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.7.x
+    - name: Build and test with Rake
+      run: |
+        gem install bundler
+        bundle install --jobs 4 --retry 3
 
     # Install & prepare Snyk
     - run: npm install --location=global snyk
     - run: snyk auth ${{ secrets.SNYK_TOKEN }}
     
     - name: Snyk Open Source Scanning
-      run: snyk monitor --file=Gemfile.lock --all-projects --remote-repo-url=mcsnyk/HelloShiftLeft-Scala --target-reference=RubyOS
+      run: snyk monitor --file=Gemfile.lock --all-projects --remote-repo-url=rubyCLI --target-reference=RubyOS
       continue-on-error: true
       
+    - uses: actions/checkout@master
+    - name: Commit files
+      run: |
+        git config --global user.email "miklos.csecsi@snyk.io"
+        git config --global user.name "mcsnyk"
+        git commit -m "Github action to update bundle" -a
+      
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
