@@ -29,7 +29,7 @@ jobs:
     - run: snyk auth ${{ secrets.SNYK_TOKEN }}
     
     - name: Snyk Open Source Scanning
-      run: snyk monitor --file=Gemfile.lock --all-projects --remote-repo-url=rubyCLI --target-reference=RubyOS
+      run: snyk monitor --file=Gemfile.lock --remote-repo-url=rubyCLI --target-reference=RubyOS
       continue-on-error: true
       
     - uses: actions/checkout@master
